@@ -1,0 +1,9 @@
+on toggle sneak:
+    if {kit::selected::%player%} is "assassin":
+        if player is sneaking:
+            remove invisibility from player
+        else:
+            apply invisibility 1 without particles to player for 999 days
+            
+on player jump:
+    make player visible

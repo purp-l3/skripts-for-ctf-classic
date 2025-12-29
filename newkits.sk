@@ -1,0 +1,93 @@
+command /kit <text> [<text>]:
+    aliases: /kits
+    executable by: players
+    trigger:
+        set {_sub} to arg-1
+        set {_name} to arg-2
+
+        if {_sub} is "create":
+            if player is not op:
+                send "&cNo permission!"
+                stop
+            if {_name} is not set:
+                send "&7Usage: /kit create <name>"
+                stop
+            if {kitnames::*} contains {_name}:
+                send "&7That kit already exists."
+                stop
+            if player's inventory is empty:
+                send "&7Your inventory is empty."
+                stop
+
+            add {_name} to {kitnames::*}
+            delete {kititems::%{_name}%::*}
+
+            loop all items in player's inventory:
+                if loop-item is not air:
+                    add loop-item to {kititems::%{_name}%::*}
+
+            # optional: include armor + offhand too
+#            if player's helmet is not air:
+#                add player's helmet to {kititems::%{_name}%::*}
+#            if player's chestplate is not air:
+#                add player's chestplate to {kititems::%{_name}%::*}
+#            if player's leggings is not air:
+#                add player's leggings to {kititems::%{_name}%::*}
+#            if player's boots is not air:
+#                add player's boots to {kititems::%{_name}%::*}
+#            if player's offhand item is not air:
+#                add player's offhand item to {kititems::%{_name}%::*}
+
+            send "&aCreated kit &f%{_name}% &awith &f%size of {kititems::%{_name}%::*}% &aitems."
+            stop
+
+        if {_sub} is "delete":
+            if player is not op:
+                send "&cNo permission!"
+                stop
+            if {_name} is not set:
+                send "&7Usage: /kit delete <name>"
+                stop
+            if {kitnames::*} doesn't contain {_name}:
+                send "&7That kit doesn't exist."
+                stop
+            remove {_name} from {kitnames::*}
+            delete {kititems::%{_name}%::*}
+            send "&aDeleted kit &f%{_name}%&a."
+            stop
+
+        if {_sub} is "get":
+            if {_name} is not set:
+                send "&7Usage: /kit get <name>"
+                stop
+            if {kitnames::*} doesn't contain {_name}:
+                send "&7That kit doesn't exist."
+                stop
+
+            # space check per item (matches Skript "can hold" condition)
+            loop {kititems::%{_name}%::*}:
+                if player's inventory can't hold loop-value:
+                    send "&cNot enough space for kit &f%{_name}%&c. Clear some inventory slots."
+                    stop
+
+            # set active kit to selected one 
+            set {kit::selected::%player%} to {_name}
+
+            clear player's inventory
+            
+            # give items back (looping is more reliable than giving the whole list at once)
+            loop {kititems::%{_name}%::*}:
+                give loop-value to player
+
+            send "&aGiven kit &f%{_name}%&a."
+            stop
+
+        send "&7Usage: /kit <create|delete|get> [name]"
+
+
+command /kitlist:
+  aliases: /listkit, /listkits, /kitlists 
+  executable by: players, console
+  trigger:
+    send "&7kits: %{kitnames::*}%"
+

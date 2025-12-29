@@ -1,0 +1,9 @@
+on projectile hit:
+  if projectile is arrow:
+    if shooter is a player:
+      if {kit::selected::%shooter%} is "archer":
+        create an explosion of force 2
+        delete projectile 
+  # custom wep true for all for now
+  if projectile is firework:
+    create an explosion of force 3

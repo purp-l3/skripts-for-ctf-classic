@@ -1,0 +1,11 @@
+on toggle sneak:
+    if {kit::selected::%player%} is "scrapper":
+        if player is sneaking:
+            remove strength from player
+        else:
+            apply strength 2 to player for 999 days
+
+every 1 second:
+    loop all players:
+        if {kit::selected::%loop-player%} is "scrapper":
+            apply speed 2 to loop-player for 1 seconds
