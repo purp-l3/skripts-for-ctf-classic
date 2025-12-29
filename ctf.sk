@@ -1,0 +1,58 @@
+#cyan flag: 44 1 -23
+# red flag: 71 1 -23
+
+function setFlag(c: flagColor, loc: location):
+  # set loc to be a flag for c team
+
+# ------------ #
+
+function takeFlag(p: player, c: flagColor):
+  # remove flag, give to player until they drop OR die w flag
+
+# ------------ #
+
+function saveLoadout(p: player):
+  set {_id} to uuid of {_p}
+  # inventory slots:
+  loop 36 times:
+    set {ctf.loadout::%{_id}%::slot::%loop-number%} to slot (loop-number - 1) of {_p}'s inventory
+
+    # armor storage
+  set {ctf.loadout::%{_id}%::helmet} to helmet of {_p}
+  set {ctf.loadout::%{_id}%::chest} to chestplate of {_p}
+  set {ctf.loadout::%{_id}%::legs} to leggings of {_p}
+  set {ctf.loadout::%{_id}%::boots} to boots of {_p}
+
+  # offhand, probably wrong syntax
+  set {ctf.loadout::%{_id}%::offhand} to offhand item of {_p}
+
+  # clear inv to make way for new items
+  clear {_p}'s inventory
+  clear {_p}'s armor
+  set offhand item of {_p} to air
+
+# ------------ #
+
+function restoreLoadout(p: player):
+  set {_id} to uuid of {_p}
+
+  # restore inv slots:
+  loop 36 times:
+    set slot (loop-number - 1) of {_p}'s inventory to {ctf.loadout::%{_id}%::slot::%loop-number%}
+
+  # armor slots
+
+  set helmet of {_p} to {ctf.loadout::%{_id}%::helmet}
+  set chestplate of {_p} to {ctf.loadout::%{_id}%::chest}
+  set leggings of {_p} to {ctf.loadout::%{id}%::legs}
+  set boots of {_p} to {ctf.loadout::%{id}%::boots}
+
+  # offhand 
+  set offhand item of {_p} to {ctf.loadout::%{_id}%::offhand}
+
+  # deallocate stored list of items now
+  delete {ctf.loadout::%{_id}%::*}
+
+# ------------ #
+
+
